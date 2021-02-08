@@ -21,6 +21,12 @@
 
 namespace nana::drawerbase::button{
 
+			struct scheme
+				: public widget_geometrics
+			{
+				color_proxy clicked_color{ colors::brown };
+			};
+
 			///	Draw the button
 			class trigger: public drawer_trigger
 			{
@@ -60,9 +66,9 @@ namespace nana
 
 		/// Define a button widget and provides the interfaces to be operational
 		class button
-			: public widget_object<category::widget_tag, drawerbase::button::trigger>
+			: public widget_object<category::widget_tag, drawerbase::button::trigger, ::nana::general_events, drawerbase::button::scheme>
 		{
-			typedef widget_object<category::widget_tag, drawerbase::button::trigger> base_type;
+			typedef widget_object<category::widget_tag, drawerbase::button::trigger, ::nana::general_events, drawerbase::button::scheme> base_type;
 		public:
 			button();
 
@@ -88,7 +94,6 @@ namespace nana
 			button& enable_gradual_background(bool);	///< Enables/Disables drawing gradual background.
 			
 			button& enable_clicked_color(bool);			///< Enables/Disables drawing the button with a different color
-			void set_clicked_color(const nana::color& col);
 
 			button& set_bground(const pat::cloneable<element::element_interface>&);	///< Sets a user-defined background element.
 			button& set_bground(const std::string&);	///< Sets a pre-defined background element by a name.

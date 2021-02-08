@@ -51,13 +51,10 @@ namespace nana
 			bool gradual_background{ true };
 			bool enable_clicked_color{ false };
 			paint::image	icon;
-			::nana::color	bgcolor;
-			::nana::color	fgcolor;
-			::nana::color clickedcolor{ colors::button_face };
 		};
 
 		struct trigger::impl {
-			widget* wdg{nullptr};
+			::nana::button* wdg{nullptr};
 			element::cite_bground cite{ "button" };
 			content_measurer measurer;
 			attributes attr;
@@ -88,7 +85,7 @@ namespace nana
 
 		void trigger::attached(widget_reference wdg, graph_reference graph)
 		{
-			impl_->wdg = &wdg;
+			impl_->wdg = static_cast<nana::button*>(&wdg);
 			window wd = wdg;
 
 			api::dev::enable_space_click(wd, true);
@@ -138,9 +135,6 @@ namespace nana
 		{
 			bool eb = impl_->wdg->enabled();;
 
-			impl_->attr.bgcolor = impl_->wdg->bgcolor();
-			impl_->attr.fgcolor = impl_->wdg->fgcolor();
-
 			element_state e_state = impl_->attr.e_state;
 			if (eb)
 			{
@@ -155,7 +149,9 @@ namespace nana
 			else
 				e_state = element_state::disabled;
 
-			if (false == impl_->cite.draw(graph, impl_->attr.bgcolor, impl_->attr.fgcolor, ::nana::rectangle{ graph.size() }, e_state))
+			auto& sch = impl_->wdg->scheme();
+
+			if (false == impl_->cite.draw(graph, sch.background, sch.foreground, ::nana::rectangle{ graph.size() }, e_state))
 			{
 				if (api::is_transparent_background(*impl_->wdg))
 					api::dev::copy_transparent_background(*impl_->wdg, graph);
@@ -262,7 +258,9 @@ namespace nana
 					if (element_state::pressed == impl_->attr.e_state)
 						++pos;
 
-					auto text_color = (impl_->attr.focus_color && impl_->attr.focused ? ::nana::color(colors::blue) : impl_->attr.fgcolor);
+					auto& sch = impl_->wdg->scheme();
+
+					auto text_color = (impl_->attr.focus_color && impl_->attr.focused ? ::nana::color(colors::blue) : sch.foreground);
 					graph.palette(true, text_color);
 
 					if (impl_->attr.omitted)
@@ -300,10 +298,12 @@ namespace nana
 			nana::rectangle r(graph.size());
 			r.pare_off(1);
 
+			auto& sch = impl_->wdg->scheme();
+
 			if (impl_->attr.gradual_background)
 			{
-				auto from = impl_->attr.bgcolor.blend(colors::white, 0.8);
-				auto to = impl_->attr.bgcolor.blend(colors::black, 0.05);
+				auto from = sch.background.get_color().blend(colors::white, 0.8);
+				auto to = sch.background.get_color().blend(colors::black, 0.05);
 
 				if (element_state::pressed == impl_->attr.e_state)
 				{
@@ -316,11 +316,11 @@ namespace nana
 
 			if (element_state::pressed == impl_->attr.e_state && impl_->attr.enable_clicked_color)
 			{
-				graph.rectangle(true, impl_->attr.clickedcolor);
+				graph.rectangle(true, sch.clicked_color);
 			}
 			else
 			{
-				graph.rectangle(true, impl_->attr.bgcolor);
+				graph.rectangle(true, sch.background);
 			}
 		}
 
@@ -494,11 +494,6 @@ namespace nana
 			api::refresh_window(handle());
 		}
 		return *this;
-	}
-
-	void button::set_clicked_color(const nana::color& col)
-	{
-		get_drawer_trigger().get_impl()->attr.clickedcolor = col;
 	}
 
 	button& button::set_bground(const pat::cloneable<element::element_interface>& rv)
