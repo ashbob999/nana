@@ -86,6 +86,9 @@ namespace nana
 			button& omitted(bool);						///< Enables/Disables omitting displaying the caption if the text is too long.
 			button& enable_focus_color(bool);			///< Enables/Disables showing the caption with a special color to indicate the button is focused.
 			button& enable_gradual_background(bool);	///< Enables/Disables drawing gradual background.
+			
+			button& enable_clicked_color(bool);			///< Enables/Disables drawing the button with a different color
+			void set_clicked_color(const nana::color& col);
 
 			button& set_bground(const pat::cloneable<element::element_interface>&);	///< Sets a user-defined background element.
 			button& set_bground(const std::string&);	///< Sets a pre-defined background element by a name.

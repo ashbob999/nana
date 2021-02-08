@@ -49,9 +49,11 @@ namespace nana
 			bool enable_pushed{ false };
 			bool focus_color{ true };
 			bool gradual_background{ true };
+			bool enable_clicked_color{ false };
 			paint::image	icon;
 			::nana::color	bgcolor;
 			::nana::color	fgcolor;
+			::nana::color clickedcolor{ colors::button_face };
 		};
 
 		struct trigger::impl {
@@ -311,8 +313,15 @@ namespace nana
 				graph.gradual_rectangle(r, from, to, true);
 				return;
 			}
-			
-			graph.rectangle(true, impl_->attr.bgcolor);
+
+			if (element_state::pressed == impl_->attr.e_state && impl_->attr.enable_clicked_color)
+			{
+				graph.rectangle(true, impl_->attr.clickedcolor);
+			}
+			else
+			{
+				graph.rectangle(true, impl_->attr.bgcolor);
+			}
 		}
 
 		void trigger::_m_draw_border(graph_reference graph)
@@ -473,6 +482,23 @@ namespace nana
 			api::refresh_window(handle());
 		}
 		return *this;
+	}
+
+	button& button::enable_clicked_color(bool enabled)
+	{
+		internal_scope_guard lock;
+		auto& attr = get_drawer_trigger().get_impl()->attr;
+		if (attr.enable_clicked_color != enabled)
+		{
+			attr.enable_clicked_color = enabled;
+			api::refresh_window(handle());
+		}
+		return *this;
+	}
+
+	void button::set_clicked_color(const nana::color& col)
+	{
+		get_drawer_trigger().get_impl()->attr.clickedcolor = col;
 	}
 
 	button& button::set_bground(const pat::cloneable<element::element_interface>& rv)
