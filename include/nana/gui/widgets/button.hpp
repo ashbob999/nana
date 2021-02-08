@@ -25,6 +25,7 @@ namespace nana::drawerbase::button{
 				: public widget_geometrics
 			{
 				color_proxy clicked_color{ colors::brown };
+				color_proxy focused_fgcolor{ colors::blue };
 			};
 
 			///	Draw the button

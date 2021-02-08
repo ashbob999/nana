@@ -260,7 +260,7 @@ namespace nana
 
 					auto& sch = impl_->wdg->scheme();
 
-					auto text_color = (impl_->attr.focus_color && impl_->attr.focused ? ::nana::color(colors::blue) : sch.foreground);
+					auto text_color = (impl_->attr.focus_color && impl_->attr.focused ? sch.focused_fgcolor : sch.foreground);
 					graph.palette(true, text_color);
 
 					if (impl_->attr.omitted)
