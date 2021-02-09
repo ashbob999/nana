@@ -316,7 +316,7 @@ namespace nana
 
 			if (element_state::pressed == impl_->attr.e_state && impl_->attr.enable_clicked_color)
 			{
-				graph.rectangle(true, sch.clicked_color);
+				graph.rectangle(true, sch.clicked_bgcolor);
 			}
 			else
 			{
